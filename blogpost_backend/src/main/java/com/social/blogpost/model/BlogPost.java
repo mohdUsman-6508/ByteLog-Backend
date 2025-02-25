@@ -34,4 +34,10 @@ public class BlogPost {
     @Relationship(type="HAS_TAG",direction=Relationship.Direction.OUTGOING)
     private Set<Tag> tags;
 
+    public BlogPost(String title, String content, String author, Instant createdAt) {
+        this.title = title;
+        this.content = content;
+        this.author = author;
+        this.createdAt = createdAt;
+    }
 }
