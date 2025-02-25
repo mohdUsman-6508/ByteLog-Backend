@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
+import org.springframework.data.neo4j.core.schema.Relationship;
 
 import java.time.Instant;
 
@@ -21,5 +22,8 @@ public class Comment {
     private Long commenterId;
     private String text;
     private Instant commentedAt;
+
+    @Relationship(type = "BELONGS_TO", direction = Relationship.Direction.OUTGOING)
+    private BlogPost blogPost;
 
 }
