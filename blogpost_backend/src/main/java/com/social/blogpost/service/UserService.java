@@ -1,7 +1,9 @@
 package com.social.blogpost.service;
 
 import com.social.blogpost.exception.ResourceNotFoundException;
+import com.social.blogpost.model.BlogPost;
 import com.social.blogpost.model.User;
+import com.social.blogpost.repository.BlogPostRepo;
 import com.social.blogpost.repository.UserRepo;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,11 +15,13 @@ import java.util.Optional;
 @Service
 public class UserService {
     private final UserRepo userRepo;
+    private final BlogPostRepo blogPostRepo;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepo userRepo, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepo userRepo, BlogPostRepo blogPostRepo, PasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
+        this.blogPostRepo = blogPostRepo;
     }
 
 
@@ -51,6 +55,32 @@ public class UserService {
     @Transactional
     public void deleteUser(Long id) {
         userRepo.deleteById(id);
+    }
+
+    @Transactional
+    public BlogPost saveBlogPost(Long blogPostId, Long userId) {
+        Optional<User> user = userRepo.findById(userId);
+        Optional<BlogPost> post = blogPostRepo.findById(blogPostId);
+        if (user.isPresent() && post.isPresent()) {
+            user.get().getSavedPosts().add(post.get());
+            userRepo.save(user.get());
+            return post.get();
+        } else {
+            throw new ResourceNotFoundException("Post or user not found!");
+        }
+    }
+
+    @Transactional
+    public BlogPost likeBlogPost(Long blogPostId, Long userId) {
+        Optional<User> user = userRepo.findById(userId);
+        Optional<BlogPost> post = blogPostRepo.findById(blogPostId);
+        if (user.isPresent() && post.isPresent()) {
+            user.get().getLikedPosts().add(post.get());
+            userRepo.save(user.get());
+            return post.get();
+        } else {
+            throw new ResourceNotFoundException("Post or user not found!");
+        }
     }
 
 }

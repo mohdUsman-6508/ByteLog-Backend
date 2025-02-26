@@ -20,10 +20,8 @@ public class Comment {
     @GeneratedValue
     private Long id;
     private Long commenterId;
+    private Long blogPostId;
     private String text;
     private Instant commentedAt;
-
-    @Relationship(type = "BELONGS_TO", direction = Relationship.Direction.OUTGOING)
-    private BlogPost blogPost;
 
 }

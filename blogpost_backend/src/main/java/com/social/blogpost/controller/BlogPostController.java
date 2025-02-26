@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-@RequestMapping("/api/BlogPosts")
+@RequestMapping("/api/blogposts")
 @RestController
 public class BlogPostController {
 
@@ -33,9 +33,9 @@ public class BlogPostController {
         else throw new ResourceNotFoundException("BlogPost is not found with id " + id);
     }
 
-    @PostMapping
-    public ResponseEntity<BlogPost> createBlogPost(@RequestBody BlogPost blogPost) {
-        BlogPost createdBlogPost = blogPostService.createBlogPost(blogPost);
+    @PostMapping("/{userId}")
+    public ResponseEntity<BlogPost> createBlogPost(@RequestBody BlogPost blogPost, @PathVariable Long userId) {
+        BlogPost createdBlogPost = blogPostService.createBlogPost(blogPost, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdBlogPost);
     }
 

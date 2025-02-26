@@ -1,6 +1,7 @@
 package com.social.blogpost.controller;
 
 import com.social.blogpost.exception.ResourceNotFoundException;
+import com.social.blogpost.model.BlogPost;
 import com.social.blogpost.model.User;
 import com.social.blogpost.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -49,6 +50,18 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping("/saveBlogPost/{blogPostId}/{userId}")
+    public ResponseEntity<BlogPost> savePost(@PathVariable Long blogPostId, @PathVariable Long userId) {
+        BlogPost savedBlogPost = userService.saveBlogPost(blogPostId, userId);
+        return ResponseEntity.ok(savedBlogPost);
+    }
+
+    @GetMapping("/likeBlogPost/{blogPostId}/{userId}")
+    public ResponseEntity<BlogPost> likePost(@PathVariable Long blogPostId, @PathVariable Long userId) {
+        BlogPost likedBlogPost = userService.likeBlogPost(blogPostId, userId);
+        return ResponseEntity.ok(likedBlogPost);
     }
 
 }

@@ -34,7 +34,7 @@ class BlogPostServiceTest {
     void testCreateBlogPost() {
         BlogPost post = new BlogPost("Test Title", "Test Content", "author1", Instant.now());
         when(blogPostRepository.save(any(BlogPost.class))).thenReturn(post);
-        BlogPost created = blogPostService.createBlogPost(post);
+        BlogPost created = blogPostService.createBlogPost(post,1l);
         assertNotNull(created);
         assertEquals("Test Title", created.getTitle());
         verify(blogPostRepository, times(1)).save(post);

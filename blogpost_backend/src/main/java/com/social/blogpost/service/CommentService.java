@@ -2,9 +2,12 @@ package com.social.blogpost.service;
 
 
 import com.social.blogpost.exception.ResourceNotFoundException;
+import com.social.blogpost.model.BlogPost;
 import com.social.blogpost.model.Comment;
+import com.social.blogpost.model.User;
 import com.social.blogpost.repository.BlogPostRepo;
 import com.social.blogpost.repository.CommentRepo;
+import com.social.blogpost.repository.UserRepo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,16 +20,29 @@ public class CommentService {
 
     private final CommentRepo commentRepository;
     private final BlogPostRepo blogPostRepository;
+    private final UserRepo userRepository;
 
-    public CommentService(CommentRepo commentRepository, BlogPostRepo blogPostRepository) {
+    public CommentService(CommentRepo commentRepository, BlogPostRepo blogPostRepository, UserRepo userRepository) {
         this.commentRepository = commentRepository;
         this.blogPostRepository = blogPostRepository;
+        this.userRepository = userRepository;
     }
 
     @Transactional
-    public Comment createComment(Comment comment) {
-        comment.setCommentedAt(Instant.now());
-        return commentRepository.save(comment);
+    public Comment createComment(Comment comment, Long commenterId, Long blogPostId) {
+        Optional<BlogPost> post = blogPostRepository.findById(blogPostId);
+        Optional<User> commenter = userRepository.findById(commenterId);
+        if (post.isPresent() && commenter.isPresent()) {
+            comment.setCommentedAt(Instant.now());
+            comment.setCommenterId(commenterId);
+            comment.setBlogPostId(blogPostId);
+            Comment createdComment = commentRepository.save(comment);
+            post.get().getComments().add(comment);
+            commenter.get().getComments().add(comment);
+            userRepository.save(commenter.get());
+            blogPostRepository.save(post.get());
+            return createdComment;
+        } else throw new ResourceNotFoundException("User or post not found!");
     }
 
     @Transactional(readOnly = true)
